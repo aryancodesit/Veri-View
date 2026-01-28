@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from analysis_engine import analyze_image
 from utils import download_image_to_memory, generate_pdf_report
@@ -45,6 +45,10 @@ def check_image():
         traceback.print_exc()
         return jsonify({"error": "Internal Server Error"}), 500
 
+@app.route('/reports/<path:filename>')
+def serve_report(filename):
+    return send_from_directory('reports', filename)
+
 @app.route('/report', methods=['POST'])
 def create_report():
     """
@@ -54,9 +58,13 @@ def create_report():
     try:
         data = request.json
         pdf_path = generate_pdf_report(data)
-        # In a real app, upload PDF to cloud and return URL. 
-        # For now, return a success message or the local path.
-        return jsonify({"status": "generated", "path": pdf_path})
+        
+        # Construct absolute URL for the frontend
+        # pdf_path is like "reports/report_2026...pdf"
+        filename = os.path.basename(pdf_path)
+        download_url = f"{request.host_url}reports/{filename}"
+
+        return jsonify({"status": "generated", "path": pdf_path, "download_url": download_url})
     except Exception as e:
         print(f"Error generating report: {e}")
         return jsonify({"error": "Report generation failed"}), 500

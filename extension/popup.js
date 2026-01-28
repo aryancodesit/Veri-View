@@ -149,14 +149,19 @@ async function generateReport(data) {
         });
 
         const resData = await response.json();
-        if (resData.path) {
-            statusEl.innerText = `Saved: ${resData.path}`;
+
+        if (resData.download_url) {
+            statusEl.innerText = "Report Ready!";
             statusEl.style.color = "#10b981";
+
+            // Open PDF in new tab (triggers download or viewer)
+            chrome.tabs.create({ url: resData.download_url });
         } else {
-            throw new Error("Failed");
+            throw new Error("No download URL returned");
         }
     } catch (e) {
         statusEl.innerText = "Error: " + e.message;
         statusEl.style.color = "#ef4444";
     }
+}
 }
