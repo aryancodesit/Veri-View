@@ -164,4 +164,4 @@ async function generateReport(data) {
         statusEl.style.color = "#ef4444";
     }
 }
-}
+
