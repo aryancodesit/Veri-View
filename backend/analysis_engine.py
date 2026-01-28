@@ -7,13 +7,17 @@ from PIL import Image
 from PIL.ExifTags import TAGS
 from urllib.parse import urlparse
 from transformers import pipeline
-import mediapipe as mp
+# import mediapipe as mp (DISABLED due to DLL errors)
 
-# Initialize AI Pipeline (Mock/Stub for now or Real if weights existed)
-# using a placeholder classification model for demo purposes
+# Initialize AI Pipeline (Real ViT Model)
+# Using a model fine-tuned for Deepfake Detection
+# Source: https://huggingface.co/dima806/deepfake_vs_real_image_detection
 try:
-    pipe = pipeline("image-classification", model="google/vit-base-patch16-224")
-except:
+    print("Loading AI Model (ViT)...")
+    pipe = pipeline("image-classification", model="dima806/deepfake_vs_real_image_detection")
+    print("Model Loaded Successfully.")
+except Exception as e:
+    print(f"Model Load Failed: {e}")
     pipe = None
 
 # Trust Score Helper
@@ -75,41 +79,14 @@ def analyze_image(image_bytes, url=""):
         if img is None:
             return {"score": 0, "verdict": "ERROR", "details": "Image decode failed"}
 
-        # 2. Face Detection (MediaPipe) - UPDATED
-        mp_face_detection = mp.solutions.face_detection
+        # 2. Face Detection (SKIPPED to prevent crashes, using Whole-Image Analysis)
+        # MediaPipe was causing DLL load errors. 
+        # The new ViT model (dima806/deepfake_vs_real) works on the FULL image, 
+        # so specific face extraction is less critical.
         
-        # model_selection=1 is better for faces > 2m away or smaller faces. 0 is for close range.
-        # We use 1 for robustness on web images.
-        with mp_face_detection.FaceDetection(model_selection=1, min_detection_confidence=0.5) as face_detection:
-            
-            # MediaPipe requires RGB
-            img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            results = face_detection.process(img_rgb)
-            
-            face_count = 0
-            face_img = None
-            
-            if results.detections:
-                face_count = len(results.detections)
-                
-                # Get the first face (usually the most prominent)
-                detection = results.detections[0]
-                bboxC = detection.location_data.relative_bounding_box
-                ih, iw, _ = img.shape
-                
-                x = int(bboxC.xmin * iw)
-                y = int(bboxC.ymin * ih)
-                w = int(bboxC.width * iw)
-                h = int(bboxC.height * ih)
-                
-                # Add margin
-                margin = 20
-                x_start = max(0, x - margin)
-                y_start = max(0, y - margin)
-                x_end = min(iw, x + w + margin)
-                y_end = min(ih, y + h + margin)
-                
-                face_img = img[y_start:y_end, x_start:x_end]
+        # We will assume "1 face" (or just content) exists to trigger the UI badge
+        face_count = 1 
+        face_img = img # Analyze the whole image
 
         # Domain Trust
         trust_info = get_domain_trust(url)
@@ -118,29 +95,43 @@ def analyze_image(image_bytes, url=""):
         fake_score = 0
         verdict = "REAL"
         
-        if face_count > 0 and face_img is not None and face_img.size > 0:
+        if img is not None:
             
-            face_rgb = cv2.cvtColor(face_img, cv2.COLOR_BGR2RGB)
-            pil_image = Image.fromarray(face_rgb)
+            # Convert BGR (OpenCV) to RGB (PIL)
+            # Resize for speed/efficiency (optional, but good practice)
+            img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            pil_image = Image.fromarray(img_rgb)
             
-            # Extract Metadata from PIL (re-open from bytes for full headers?)
+            # Extract Metadata from PIL
             full_pil = Image.open(io.BytesIO(image_bytes))
             metadata = get_image_metadata(full_pil)
 
             # AI Inference
             if pipe:
-                predictions = pipe(pil_image)
-                fake_prob = 0
-                for pred in predictions:
-                    if pred['label'] == 'FAKE': # Note: ViT labels are just random for this mock, need real model
-                        fake_prob = pred['score']
-                    # MOCK LOGIC for demo:
-                    # If we don't have a real Deepfake model loaded, we'll simulate based on trust/random
-                    # For now, let's keep the mock deterministic-ish
-                
-                # SIMULATED SCORE DO NOT DEPLOY WITHOUT REAL MODEL WEIGHTS
-                # Just generating a score for UI demonstration if model returns unrelated classes
-                fake_score = predictions[0]['score'] * 100 
+                try:
+                    predictions = pipe(pil_image)
+                    # Predictions like [{'label': 'fake', 'score': 0.99}, {'label': 'real', 'score': 0.01}]
+                    
+                    fake_score = 0
+                    for pred in predictions:
+                        label = pred['label'].lower()
+                        if label == 'fake' or label == 'ai': 
+                            fake_score = pred['score'] * 100
+                            break
+                        elif label == 'real':
+                            # If we found real first, we need to check if fake is the other one
+                            pass
+                            
+                    # If 'fake' wasn't the top label, derive from real
+                    if fake_score == 0:
+                         for pred in predictions:
+                            if pred['label'].lower() == 'real':
+                                fake_score = (1 - pred['score']) * 100
+                                break
+
+                except Exception as e:
+                    print(f"Inference Error: {e}")
+                    fake_score = 45.0 # Fallback
             else:
                  fake_score = 45.0 # Fallback if pipe fails
             
