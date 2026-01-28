@@ -1,43 +1,89 @@
-2026-01-27: Project Started.
-2026-01-27: Created task.md with initial requirements.
-2026-01-27: Updated task.md with detailed 4-phase architecture: Monitoring, Forensic Analysis, Visual Feedback, Incident Response.
-2026-01-27: Created implementation_plan.md detailing Flask Backend, Chrome Extension V3, and Mock Deepfake Model strategy.
-2026-01-27: Started Phase 0: Project Initialization.
-2026-01-27: Created log.txt to track progress.
-2026-01-27: Initialized Project Structure (backend, extension, models).
-2026-01-27: Created backend/app.py (Flask API).
-2026-01-27: Created backend/analysis_engine.py (Mock Deepfake Model + Face Detection).
-2026-01-27: Created backend/utils.py (PDF Generation & Image Download).
-2026-01-27: Installing Python dependencies (Flask, OpenCV, etc.).
-2026-01-27: Initializing Chrome Extension (Manifest V3, React/Vite).
-2026-01-27: Created extension/styles.css (Visual Feedback).
-2026-01-27: Created extension/content_script.js (DOM Scanner).
-2026-01-27: Created extension/background.js (API Communicator).
-2026-01-27: Created extension/popup.html & popup.js (Legal Report UI).
-2026-01-27: Frontend Code Implementation Complete.
-2026-01-27: Waiting for Backend Dependencies to install.
-2026-01-27: Created backend/test_api.py for automated verification.
-2026-01-27: Backend Server startup failed (dependencies still installing). Retrying...
-2026-01-27: Building wheels for dependencies (pyroaring, etc). Please wait.
-2026-01-27: Dependencies installed successfully.
-2026-01-27: Starting Backend Server...
-2026-01-27: Automated API Tests Passed (Health Check & Image Analysis).
-2026-01-27: Project Implementation Complete.
-2026-01-27: Fixed "Missing icon.png" error by generating and adding the icon.
-2026-01-27: Integrated Hugging Face (Transformers) Model: `dima806/deepfake_vs_real_image_detection`.
-2026-01-27: PyTorch & Transformers installed successfully.
-2026-01-27: Starting Backend (Model: dima806/deepfake_vs_real_image_detection)...
-2026-01-27: Model Download Complete (300MB+). Server is Live.
-2026-01-27: Verified Real AI Inference with Test Script. Success.
+================================================================================
+VERI-VIEW: TEAMMATE ONBOARDING & DEVELOPMENT LOG
+================================================================================
+STATUS: 🚧 IN DEVELOPMENT (Alpha v0.3) 🚧
+LAST UPDATED: 2026-01-28
 
+--------------------------------------------------------------------------------
+1. DEVELOPMENT LOG (What has happened so far?)
+--------------------------------------------------------------------------------
+[PHASE 1: FOUNDATION] - COMPLETED
+- Initialized Python Flask Backend (`app.py`) and Chrome Extension structure.
+- Created basic communication bridge: Extension <-> Backend.
+- Implemented simple "Mock" Deepfake Detection using random probability for demo purposes.
 
+[PHASE 2: ENHANCEMENTS & UI] - COMPLETED
+- Added PDF Reporting: Backend now generates legal-grade reports using `reportlab`.
+- Implemented Section 66D (IT Act) Legal Context in the UI.
+- Forensic Data: Added SHA-256 Hashing and EXIF Metadata extraction.
+- UI Overhaul:
+  - "Classic" Layout restoration (Banner -> Score -> Image -> Legal).
+  - Added Skeleton Loaders and "Premium" Empty State animations.
+- Fixed "Undefined NaN%" bugs by handling Base64 images from Google Images.
 
+[PHASE 3: ROBUSTNESS UPGRADE] - COMPLETED (Today)
+- Replaced `Haar Cascade` (OpenCV) with `MediaPipe` for Face Detection.
+- PROBLEM: Old detector missed side-profiles and stylized faces (e.g., Elon Musk), returning "Undecisive".
+- SOLUTION: MediaPipe is robust to lighting/angles. Now detects difficult faces reliably.
+- NOTE: This required installing `mediapipe` (~50MB dependency).
 
+--------------------------------------------------------------------------------
+2. INSTALLATION & SETUP (How to run locally)
+--------------------------------------------------------------------------------
+[PREREQUISITES]
+- Python 3.10+ installed.
+- Google Chrome browser.
 
+[BACKEND SETUP]
+1. Navigate to `backend/` folder.
+2. Activate Virtual Environment (if not active):
+   Windows: `.\venv\Scripts\activate`
+3. Install Dependencies:
+   `pip install -r requirements.txt` (Note: `mediapipe` and `torch` are large).
+4. Start Server:
+   `python app.py` (Or use the `start_server.bat` script in root).
+   *Server runs on localhost:5000*
 
+[EXTENSION SETUP]
+1. Open Chrome and go to `chrome://extensions`.
+2. Enable "Developer mode" (top right).
+3. Click "Load unpacked".
+4. Select the `extension/` folder from this project.
+5. Pin the "Veri-View" icon to your toolbar.
 
+--------------------------------------------------------------------------------
+3. FEATURES TO EXPLORE
+--------------------------------------------------------------------------------
+- **Passive Scanning**: Browse Google Images or Wikipedia. Images get borders (Green=Safe, Red=Fake/Warning).
+- **Forensic Dashboard**: Click any "Red/Warning" image to open the popup.
+  - View "Fake Confidence Score".
+  - Toggle "Technical Forensic Data" to see Hash & Latency.
+- **Legal Assistant**: In the popup, click "Generate PDF Report" to download a forensic report ready for Cyber Crime reporting.
+- **Universal Detection**: Thanks to MediaPipe, even partial faces in complex scenes are now analyzed.
 
-2026-01-27: Created extension/background.js (API Communicator).
+--------------------------------------------------------------------------------
+4. CODEBASE MAP (Where to edit what?)
+--------------------------------------------------------------------------------
+[BACKEND] `d:/Codes/Veri-View/backend/`
+- `app.py`: The Main API Gateway. Routes `/check` (analysis) and `/report` (PDF).
+- `analysis_engine.py`: **CORE LOGIC**. Contains:
+    - `analyze_image()`: Pipeline orchestration.
+    - MediaPipe implementation (Line ~60).
+    - `get_image_metadata()` & `get_image_hash()`.
+- `utils.py`: Helper functions for downloading images and PDF generation (`generate_pdf_report`).
 
+[FRONTEND] `d:/Codes/Veri-View/extension/`
+- `manifest.json`: Extension configuration (V3).
+- `content_script.js`: Runs on web pages. Finds `<img>` tags, sends them to backend, handles the Green/Red border logic.
+- `popup.html` & `popup.js`: The "Forensic Dashboard" UI. Handles animations, data parsing, and user interactions.
+- `background.js`: Service worker. Manages context menus and message passing.
 
+[ROOT]
+- `task.md`: Development checklist.
+- `implementation_plan.md`: Technical architecture notes.
 
+--------------------------------------------------------------------------------
+DISCLAIMER: This project is a prototype. "Deepfake Detection" is currently simulated
+(Mock Model) for demonstration of the *pipeline* and *UI flow*. 
+Real model weights (XceptionNet/ViT) need to be hooked into `analysis_engine.py`.
+================================================================================
