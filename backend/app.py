@@ -62,4 +62,5 @@ def create_report():
         return jsonify({"error": "Report generation failed"}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    # SECURITY: Disable debug mode in production to prevent RCE/Info Leak
+    app.run(debug=False, port=5000)
