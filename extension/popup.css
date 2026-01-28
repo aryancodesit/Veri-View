@@ -11,7 +11,9 @@
 
 body {
     font-family: 'Inter', sans-serif;
-    width: 380px;
+    width: 350px;
+    /* Fits within 400px window */
+    box-sizing: border-box;
     margin: 0;
     padding: 15px;
     background: var(--bg-color);

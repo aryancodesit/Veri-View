@@ -27,6 +27,13 @@ LAST UPDATED: 2026-01-28
 - SOLUTION: MediaPipe is robust to lighting/angles. Now detects difficult faces reliably.
 - NOTE: This required installing `mediapipe` (~50MB dependency).
 
+[PHASE 4: REAL AI & REFINEMENTS] - COMPLETED (Latest Update)
+- **Deepfake AI Upgrade**: Replaced Mock logic with a **Real Vision Transformer (ViT)** model (`dima806/deepfake_vs_real_image_detection`).
+- **Crash Fixes**: Resolved critical "DLL load failed" errors with MediaPipe by switching to Whole-Image Analysis (more robust).
+- **UI Architecture**: Split CSS into `popup.css` and `content.css` to fix the "website cropping" bug.
+- **Report Download**: Fully integrated PDF generation. Users can now click "Generate Report" in the popup and get a downloadable file immediately.
+- **Safety**: Added ability to generate authenticity reports even for "Safe" images.
+
 --------------------------------------------------------------------------------
 2. INSTALLATION & SETUP (How to run locally)
 --------------------------------------------------------------------------------
@@ -83,7 +90,7 @@ LAST UPDATED: 2026-01-28
 - `implementation_plan.md`: Technical architecture notes.
 
 --------------------------------------------------------------------------------
-DISCLAIMER: This project is a prototype. "Deepfake Detection" is currently simulated
-(Mock Model) for demonstration of the *pipeline* and *UI flow*. 
-Real model weights (XceptionNet/ViT) need to be hooked into `analysis_engine.py`.
+DISCLAIMER: This project uses `dima806/deepfake_vs_real_image_detection` (ViT).
+While significantly better than random estimation, deepfake detection is probabilistic.
+Always verify sources manually.
 ================================================================================

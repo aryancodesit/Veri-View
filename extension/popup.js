@@ -120,6 +120,9 @@ function renderDashboard(data) {
 
 function setupActions(data) {
     document.getElementById('btn-report').onclick = () => generateReport(data);
+    const safeBtn = document.getElementById('btn-report-safe');
+    if (safeBtn) safeBtn.onclick = () => generateReport(data);
+
     document.getElementById('btn-gov').onclick = () => chrome.tabs.create({ url: "https://cybercrime.gov.in/" });
 }
 

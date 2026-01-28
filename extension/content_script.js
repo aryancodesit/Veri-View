@@ -141,7 +141,7 @@ function createGlobalWidget() {
 }
 
 function updateWidget(data, type) {
-    if (!globalWidget) return;
+    if (!globalWidget) createGlobalWidget();
 
     // Style
     globalWidget.className = `veri-view-widget expanded ${type}`;
