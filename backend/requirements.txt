@@ -1,0 +1,13 @@
+flask
+flask_cors
+requests
+opencv-python
+redis
+supabase
+reportlab
+transformers
+torch
+pillow
+mediapipe
+transformers
+pillow

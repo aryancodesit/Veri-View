@@ -1,0 +1,153 @@
+/* Veri-View Styles */
+
+.veri-view-scanning {
+  border: 4px solid #f39c12 !important;
+  /* Orange/Yellow */
+  box-shadow: 0 0 10px #f39c12;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.veri-view-safe {
+  border: 4px solid #2ecc71 !important;
+  /* Green */
+  box-shadow: 0 0 15px #2ecc71;
+  position: relative;
+}
+
+.veri-view-fake {
+  border: 4px solid #e74c3c !important;
+  /* Red */
+  box-shadow: 0 0 20px #e74c3c;
+  animation: pulse-red 2s infinite;
+  cursor: pointer;
+  position: relative;
+}
+
+@keyframes pulse-red {
+  0% {
+    box-shadow: 0 0 10px #e74c3c;
+  }
+
+  50% {
+    box-shadow: 0 0 25px #e74c3c;
+  }
+
+  100% {
+    box-shadow: 0 0 10px #e74c3c;
+  }
+}
+
+/* Badge */
+.veri-view-badge {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+  border-radius: 4px;
+  z-index: 10000;
+  pointer-events: auto;
+  cursor: pointer;
+  font-family: sans-serif;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  transition: transform 0.2s;
+}
+
+.veri-view-badge:hover {
+  transform: scale(1.05);
+}
+
+.veri-view-badge.safe {
+  background-color: #2ecc71;
+}
+
+.veri-view-badge.fake {
+  background-color: #e74c3c;
+}
+
+.veri-view-badge.warning {
+  background-color: #f39c12;
+}
+
+/* Ensure container allows absolute positioning */
+.veri-view-container {
+  position: relative !important;
+  display: inline-block;
+}
+
+/* Global Draggable Widget */
+.veri-view-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background: #2c3e50;
+  border-radius: 50%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  z-index: 2147483647;
+  /* Max Z-Index */
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 0.3s, border-radius 0.3s, background 0.3s;
+  overflow: hidden;
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  user-select: none;
+}
+
+.veri-view-widget:active {
+  cursor: grabbing;
+}
+
+.veri-view-widget.expanded {
+  width: 200px;
+  /* Expand for text */
+  height: auto;
+  min-height: 60px;
+  border-radius: 30px;
+  padding: 10px;
+  justify-content: flex-start;
+}
+
+.veri-view-widget-icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.veri-view-widget-content {
+  margin-left: 10px;
+  font-size: 13px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s;
+  display: none;
+}
+
+.veri-view-widget.expanded .veri-view-widget-content {
+  opacity: 1;
+  display: block;
+}
+
+.veri-view-widget.fake {
+  background: #c0392b;
+}
+
+.veri-view-widget.safe {
+  background: #2ecc71;
+}
+
+.veri-view-widget.warning {
+  background: #f39c12;
+}

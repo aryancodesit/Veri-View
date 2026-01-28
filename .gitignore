@@ -1,0 +1,8 @@
+venv/
+__pycache__/
+*.pyc
+.env
+reports/
+node_modules/
+.DS_Store
+.vscode/
